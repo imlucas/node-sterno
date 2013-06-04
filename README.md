@@ -14,7 +14,7 @@ Sterno 7-oz. Cooking Fuel:
  * Generates the maximum heat to keep food temperatures in the safe zone
 
 
-== Usage
+## Usage
 
     require('sterno')('http://assets.mysite.com', ['/app.css', '/app.js'], function(err){
         console.log('assets loaded.');

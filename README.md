@@ -19,3 +19,9 @@ Sterno 7-oz. Cooking Fuel:
     require('sterno')('http://assets.mysite.com', ['/app.css', '/app.js'], function(err){
         console.log('assets loaded.');
     });
+
+## sterno.json
+
+    {
+        "/path.ext": "version"
+    }

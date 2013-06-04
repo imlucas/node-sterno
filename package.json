@@ -1,0 +1,23 @@
+{
+  "name": "node-sterno",
+  "version": "0.0.1",
+  "description": "When app cache works right, this wont be neccessary any more.",
+  "main": "index.js",
+  "scripts": {
+    "test": "open test/index.test.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/imlucas/node-sterno.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "~1.6.0",
+    "mocha": "~1.10.0"
+  },
+  "author": "Lucas Hrabovsky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imlucas/node-sterno/issues"
+  }
+}

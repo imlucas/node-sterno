@@ -12,3 +12,10 @@ Sterno 7-oz. Cooking Fuel:
  * Formula is Biodegradable and water soluble
  * Steel Can is recyclable and made from recycled material
  * Generates the maximum heat to keep food temperatures in the safe zone
+
+
+== Usage
+
+    require('sterno')('http://assets.mysite.com', ['/app.css', '/app.js'], function(err){
+        console.log('assets loaded.');
+    });

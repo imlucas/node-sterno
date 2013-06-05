@@ -23,5 +23,6 @@ Sterno 7-oz. Cooking Fuel:
 ## sterno.json
 
     {
-        "/path.ext": "version"
+        "/path.ext": "version",
+        "a config key": "say environment, whatever you want"
     }

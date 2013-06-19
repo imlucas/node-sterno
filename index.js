@@ -2,9 +2,7 @@
 
 
 // require('sterno')('http://assets.mysite.com', ['/app.js', '/app.css']);
-var module = module || {},
-    LocalFileSystem = LocalFileSystem || {},
-    process = process || {},
+var LocalFileSystem = LocalFileSystem || {},
     cordova = cordova || {};
 
 // Async helper.  Like async.parallel.  Calls done on first non null error
@@ -93,7 +91,7 @@ var append = {
 function Loader(url, assets, bootstrapPath){
     this.url = url;
     this.assets = assets;
-    this.bootstrapPath = (bootstrapPath ? url + bootstrapPath : url + '/sterno.json');
+    this.bootstrapPath = (bootstrapPath ? url + bootstrapPath : url + '/sterno-bootstrap.json');
     this.versions = {};
     this.appVersion = localStorage.getItem('appVersion');
 
@@ -253,3 +251,4 @@ Loader.prototype.deviceReady = function(done){
         self.insert(done);
     });
 };
+

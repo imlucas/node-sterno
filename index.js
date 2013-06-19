@@ -1,19 +1,8 @@
 "use strict";
 
 var LocalFileSystem = LocalFileSystem || {},
-    cordova = cordova || {};
-
-// Usage:
-// require('sterno')(process.env.url, ['/app.js']);
-//
-// on load / device ready:
-//
-// # get local file system for reading / writing file caches
-// # load bootstrap json from remote
-// # insert assets to the dom, and cache locally if need be
-module.exports = function(url, assets, done){
-    return new Loader(url, assets).load(done);
-};
+    cordova = cordova || {},
+    process = process || {};
 
 // Async helper.  Like async.parallel.  Calls done on first non null error
 // or when all tasks completed.
@@ -294,5 +283,17 @@ Loader.prototype.deviceReady = function(done){
     ], function(err){
         self.insert(done);
     });
+};
+
+// Usage:
+// require('sterno')(process.env.url, ['/app.js']);
+//
+// on load / device ready:
+//
+// # get local file system for reading / writing file caches
+// # load bootstrap json from remote
+// # insert assets to the dom, and cache locally if need be
+module.exports = function(url, assets, done){
+    return new Loader(url, assets).load(done);
 };
 

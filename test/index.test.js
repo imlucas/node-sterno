@@ -11,7 +11,7 @@ describe("Loader", function(){
     describe("Setup", function(){
         var loader = new Loader(url, ['/app.js']);
         it("should use the default bootstrap path", function(){
-            assert.equal(loader.bootstrapPath, url + '/sterno.json');
+            assert.equal(loader.bootstrapPath, url + '/sterno-bootstrap.json');
         });
 
         it("should be changed for a fresh file", function(){

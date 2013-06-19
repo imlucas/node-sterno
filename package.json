@@ -1,6 +1,6 @@
 {
   "name": "sterno",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "When app cache works right, this wont be neccessary any more.",
   "main": "index.js",
   "scripts": {

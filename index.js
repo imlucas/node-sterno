@@ -1,9 +1,5 @@
 "use strict";
 
-var LocalFileSystem = LocalFileSystem || {},
-    cordova = cordova || {},
-    process = process || {};
-
 // Async helper.  Like async.parallel.  Calls done on first non null error
 // or when all tasks completed.
 function parallel(tasks, done){
@@ -198,8 +194,8 @@ Loader.prototype.read = function(src, done){
     this.fs.root.getFile(src, {}, function(entry){
         entry.file(function(file){
             var reader;
-            if(cordova){
-                reader = new cordova.require('cordova/plugin/FileReader')();
+            if(window.cordova){
+                reader = new window.cordova.require('cordova/plugin/FileReader')();
             }
             else {
                 reader = window.FileReader();
@@ -239,7 +235,7 @@ Loader.prototype.write = function(dest, blob, done){
 Loader.prototype.load = function(done){
     var self = this;
     window.addEventListener('load', function(){
-        if(!window.Cordova){
+        if(!window.cordova){
             return self.deviceReady(done);
         }
         document.addEventListener('deviceready', function(){
@@ -259,7 +255,11 @@ Loader.prototype.deviceReady = function(done){
     var self = this;
     parallel([
         function getFS(callback){
-            (window.requestFileSystem || window.webkitRequestFileSystem)(LocalFileSystem.PERSISTENT || window.PERSISTENT, 50 * 1024 * 1024, function(fs){
+            var requestFS = window.requestFileSystem || window.webkitRequestFileSystem;
+            if(!requestFS){
+                return callback();
+            }
+            requestFS(window.LocalFileSystem.PERSISTENT || window.PERSISTENT, 50 * 1024 * 1024, function(fs){
                 self.fs = fs;
                 callback();
             }, callback);

@@ -24,7 +24,6 @@ function parallel(tasks, done){
 
 // XHR fetch asset.
 function fetch(url, done){
-    console.log('fetching ' + url);
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.onload = function(e) {
@@ -278,12 +277,9 @@ Loader.prototype.deviceReady = function(done){
         function getBootstrap(callback){
             fetch(self.bootstrapPath + '?' + Math.random(), function(err, event){
                 if(err){
-                    console.log('error fetching bootstrap', err.message);
                     return callback(err);
                 }
                 self.versions = JSON.parse(event.target.response);
-                console.log('setting versions to ' + event.target.response);
-
                 // If we haven't bootstrapped yet, default to whats there now.
                 if(!self.appVersion){
                     self.appVersion = self.versions.version;
@@ -307,8 +303,6 @@ Loader.prototype.deviceReady = function(done){
 // # load bootstrap json from remote
 // # insert assets to the dom, and cache locally if need be
 module.exports = function(url, assets, done){
-    console.log('creating loader for url ' + url);
-    console.log('with assets ' +  JSON.stringify(assets));
     return new Loader(url, assets).load(done);
 };
 

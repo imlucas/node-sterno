@@ -95,7 +95,6 @@ function Loader(url, assets, bootstrapPath){
     if(this.appVersion){
         this.version = this.parseVersion(this.appVersion);
     }
-
 }
 
 // Use data from the bootstrap to check if a file is different from our
@@ -107,11 +106,22 @@ Loader.prototype.hasChanged = function(src){
         this.localVersions[src] = localStorage.getItem('versions_' + src);
     }
 
-    if(!this.localVersions[src]){
-        return true;
+    return (!this.localVersions[src]) ? true : (this.versions[src] !== this.localVersions[src]);
+};
+
+// If the file had a version in the bootstrap JSON, use it to point at the
+// file we actually want.
+//
+// @param {String} src Source of the file, ie /app.js
+Loader.prototype.getVersionedUrl = function(src){
+    var version = this.versions[src],
+        url = this.url + src;
+
+    if(version){
+        url  += '/' + version;
     }
 
-    return this.versions[src] !== this.localVersions[src];
+    return url;
 };
 
 // Use our decision tree to check if we should actually pull down a nwe version
@@ -151,7 +161,7 @@ Loader.prototype.insert = function(done){
             // Can we use this version and are we online?
             if(self.shouldUpgradeAsset(src)){
                 // Yes -> download, add to dom, next tick save to disk
-                fetch(self.url + src, function(err, event){
+                fetch(self.getVersionedUrl(src), function(err, event){
                     if(err){
                         return callback(err);
                     }

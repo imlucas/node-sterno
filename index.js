@@ -205,12 +205,12 @@ Loader.prototype.read = function(src, done){
         entry.file(function(file){
             var reader;
             if(window.cordova){
-                reader = new window.cordova.require('cordova/plugin/FileReader')();
+                var FileReader = cordova.require('cordova/plugin/FileReader');
+                reader = new FileReader();
             }
             else {
                 reader = window.FileReader();
             }
-
             reader.onloadend = function(e){
                 done(null, e.target.result);
             };

@@ -239,7 +239,7 @@ Loader.prototype.write = function(dest, blob, done){
 Loader.prototype.load = function(done){
     var self = this;
     window.addEventListener('load', function(){
-        if(navigator.vendor === 'Google Inc.'){
+        if(!window.Cordova){
             return self.deviceReady(done);
         }
         document.addEventListener('deviceready', function(){

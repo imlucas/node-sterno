@@ -276,7 +276,7 @@ Loader.prototype.deviceReady = function(done){
             }, callback);
         },
         function getBootstrap(callback){
-            fetch(self.bootstrapPath, function(err, event){
+            fetch(self.bootstrapPath + '?' + Math.random(), function(err, event){
                 if(err){
                     console.log('error fetching bootstrap', err.message);
                     return callback(err);

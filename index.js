@@ -27,7 +27,7 @@ function fetch(url, done){
     if(!process.env || process.env.environment === 'development'){
         url += '?bust' + Math.random();
     }
-
+    console.log('sterno fetch:', url);
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.onload = function(e) {

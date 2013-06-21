@@ -259,7 +259,8 @@ Loader.prototype.deviceReady = function(done){
             if(!requestFS){
                 return callback();
             }
-            requestFS(window.LocalFileSystem.PERSISTENT || window.PERSISTENT, 50 * 1024 * 1024, function(fs){
+            var winFS = window.LocalFileSystem|| window;
+            requestFS(winFS.PERSISTENT, 50 * 1024 * 1024, function(fs){
                 self.fs = fs;
                 callback();
             }, callback);

@@ -24,10 +24,7 @@ function parallel(tasks, done){
 
 // XHR fetch asset.
 function fetch(url, done){
-    if(!process.env || process.env.environment === 'development'){
-        url += '?bust' + Math.random();
-    }
-    console.log('sterno fetch:', url);
+    console.log('fetching ' + url);
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.onload = function(e) {
@@ -117,7 +114,10 @@ Loader.prototype.getVersionedUrl = function(src){
     var version = this.versions[src],
         url = this.url + src;
 
-    if(version){
+    if(!process.env || process.env.environment === 'development'){
+        url += '?bust' + Math.random();
+    }
+    else if(version){
         url  += '/' + version;
     }
 
@@ -278,9 +278,11 @@ Loader.prototype.deviceReady = function(done){
         function getBootstrap(callback){
             fetch(self.bootstrapPath, function(err, event){
                 if(err){
+                    console.log('error fetching bootstrap', err.message);
                     return callback(err);
                 }
                 self.versions = JSON.parse(event.target.response);
+                console.log('setting versions to ' + event.target.response);
 
                 // If we haven't bootstrapped yet, default to whats there now.
                 if(!self.appVersion){
@@ -305,6 +307,8 @@ Loader.prototype.deviceReady = function(done){
 // # load bootstrap json from remote
 // # insert assets to the dom, and cache locally if need be
 module.exports = function(url, assets, done){
+    console.log('creating loader for url ' + url);
+    console.log('with assets ' +  JSON.stringify(assets));
     return new Loader(url, assets).load(done);
 };
 

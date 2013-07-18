@@ -13,7 +13,7 @@ Tired of appcache being broken?  Still need to work with offline or packaged app
     // to the local filesystem.
     //
     // you shouldnt have to worry about where your files are actually being served
-    // from.  currently only
+    // from.  extensive docs are in the code.
     //
     // http://assets.mysite.com/sterno-bootstrap.json should not be
     // cached with HTTP headers.

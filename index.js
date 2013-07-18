@@ -305,4 +305,3 @@ Loader.prototype.deviceReady = function(done){
 module.exports = function(url, assets, done){
     return new Loader(url, assets).load(done);
 };
-

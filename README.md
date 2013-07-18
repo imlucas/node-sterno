@@ -1,18 +1,6 @@
-Sterno 7-oz. Cooking Fuel:
+# Sterno
 
- * Size: 7 oz
- * Quantity: 6pk
- * Burns for up to 2 hours
- * Resists spilling if accidentally tipped
- * Ignites immediately with the touch of fire
- * Burns steadily and intensely
- * Consistently delivers promised burn time
- * Clean burning, odorless and smokeless
- * Smart Can tells when it is too hot to handle
- * Formula is Biodegradable and water soluble
- * Steel Can is recyclable and made from recycled material
- * Generates the maximum heat to keep food temperatures in the safe zone
-
+Tired of appcache being broken?  Still need to work with offline or packaged apps?  I'm here to help.
 
 ## Usage
 
@@ -26,3 +14,13 @@ Sterno 7-oz. Cooking Fuel:
         "/path.ext": "version",
         "a config key": "say environment, whatever you want"
     }
+
+## Testing
+
+I would love if this were easier, but you'll have to leap of
+faith it with me a bit.  There are a few tests for the tricky
+business logic parts that can just run and be hard tested in
+the browser with mocha.  If you have ideas to test the other bits,
+ie falling back to local resources when offline but not bootstrapped,
+cordova file system access, etc, please [open an issue](https://github.com/imlucas/node-sterno/issues).
+

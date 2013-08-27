@@ -224,6 +224,9 @@ Loader.prototype.read = function(src, done){
 // @param {String} blob
 // @param {Function} done
 Loader.prototype.write = function(dest, blob, done){
+    if(!this.fs){
+        return done(new Error('Filesystem not available?'));
+    }
     var self = this;
     this.fs.root.getFile(dest, {'create': true, 'exclusive': false}, function(entry){
         entry.createWriter(function(writer){

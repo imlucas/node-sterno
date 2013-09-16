@@ -75,13 +75,13 @@ var append = {
 // @param {String} url The base url for assets
 // @param {Array} assets just a list of assets to manage, ie /app.css, /app.js, etc.
 // @param {String} bootstrapPath optionally where bootstrap data can be found
-function Loader(url, assets, bootstrapPath){
+function Loader(url, assets, version, bootstrapPath){
     this.url = url;
     this.assets = assets;
     this.bootstrapPath = (bootstrapPath ? url + bootstrapPath : url + '/sterno-bootstrap.json');
     this.versions = {};
-    this.appVersion = localStorage.getItem('appVersion');
-
+    this.appVersion = version;
+    console.log('appVersion', this.appVersion);
     // Hashes of files we've already seen.
     // Gets lazy loaded from localstorage
     this.localVersions = {};
@@ -123,16 +123,26 @@ Loader.prototype.getVersionedUrl = function(src){
     return url;
 };
 
-// Use our decision tree to check if we should actually pull down a nwe version
+// Use our decision tree to check if we should actually pull down a new version
 // of an asset.  Check that we're online, the file has changed and the version
 // in the bootstrap is actually one we can use.
 //
 // @param {String} src Source of the file, ie /app.js
 Loader.prototype.shouldUpgradeAsset = function(src){
+    if(this.incomingVersion.major !== this.version.major){
+        localStorage.setItem('upgrade', JSON.stringify('required'));
+        console.log('Upgrade required');
+        return false;
+    }
+    if(this.incomingVersion.minor !== this.version.minor){
+        localStorage.setItem('upgrade', JSON.stringify('recommended'));
+        console.log('Upgrade recommended');
+        return false;
+    }
+    localStorage.setItem('upgrade', JSON.stringify('none'));
     if(!navigator.onLine || !this.hasChanged(src)){
         return false;
     }
-
     return (this.incomingVersion.major === this.version.major && this.incomingVersion.minor === this.version.minor);
 };
 
@@ -159,6 +169,7 @@ Loader.prototype.insert = function(done){
         return function(callback){
             // Can we use this version and are we online?
             if(self.shouldUpgradeAsset(src)){
+                console.log('Upgrading: ' + assetType);
                 // Yes -> download, add to dom, next tick save to disk
                 fetch(self.getVersionedUrl(src), function(err, event){
                     if(err){
@@ -166,7 +177,6 @@ Loader.prototype.insert = function(done){
                     }
 
                     append[assetType](event.target.response);
-
                     self.write(src, event.target.response, function(err){
                         if(err){
                             return callback(err);
@@ -177,6 +187,7 @@ Loader.prototype.insert = function(done){
                 });
             }
             else {
+                console.log('Not upgrading: ' + assetType);
                 // No -> check FS. not in fs, set to local URI
                 self.read(src, function(err, blob){
                     if(err){ // Doesn't exist or no FS.
@@ -228,6 +239,7 @@ Loader.prototype.write = function(dest, blob, done){
     this.fs.root.getFile(dest, {'create': true, 'exclusive': false}, function(entry){
         entry.createWriter(function(writer){
             writer.onwriteend = function(e){
+                console.log('Write done: ' + dest);
                 done();
             };
             writer.write(blob);
@@ -302,6 +314,6 @@ Loader.prototype.deviceReady = function(done){
 // # get local file system for reading / writing file caches
 // # load bootstrap json from remote
 // # insert assets to the dom, and cache locally if need be
-module.exports = function(url, assets, done){
-    return new Loader(url, assets).load(done);
+module.exports = function(url, assets, version, done){
+    return new Loader(url, assets, version).load(done);
 };

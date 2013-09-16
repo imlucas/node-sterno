@@ -129,21 +129,10 @@ Loader.prototype.getVersionedUrl = function(src){
 //
 // @param {String} src Source of the file, ie /app.js
 Loader.prototype.shouldUpgradeAsset = function(src){
-    if(this.incomingVersion.major !== this.version.major){
-        localStorage.setItem('upgrade', JSON.stringify('required'));
-        console.log('Upgrade required');
-        return false;
-    }
-    if(this.incomingVersion.minor !== this.version.minor){
-        localStorage.setItem('upgrade', JSON.stringify('recommended'));
-        console.log('Upgrade recommended');
-        return false;
-    }
-    localStorage.setItem('upgrade', JSON.stringify('none'));
     if(!navigator.onLine || !this.hasChanged(src)){
         return false;
     }
-    return (this.incomingVersion.major === this.version.major && this.incomingVersion.minor === this.version.minor);
+    return true;
 };
 
 // Just blow up a version string into a map of major, minor and patch.
@@ -298,6 +287,15 @@ Loader.prototype.deviceReady = function(done){
                     self.version = self.parseVersion(self.appVersion);
                 }
                 self.incomingVersion = self.parseVersion(self.versions.version);
+                console.log('incomingVersion: ' + self.versions.version);
+                if(self.incomingVersion.major !== this.version.major){
+                    localStorage.setItem('upgrade', JSON.stringify('required'));
+                    console.log('Upgrade required');
+                }
+                if(self.incomingVersion.minor !== this.version.minor){
+                    localStorage.setItem('upgrade', JSON.stringify('recommended'));
+                    console.log('Upgrade recommended');
+                }
                 callback();
             });
         }

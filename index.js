@@ -173,7 +173,7 @@ Loader.prototype.getRemoteCSS = function(){
             {
                 'type': 'css',
                 'onSuccess': this.appendCSS,
-        	    'onFail': this.getBundleCSS
+        	    'onFail': this.getFileSystem
             }
     );
 };
@@ -184,9 +184,9 @@ Loader.prototype.getRemoteJS = function(){
     this.getRemoteFile(
         this.url + '/app.js?r=' + Math.random(),
             {
-                'type': 'css',
+                'type': 'js',
                 'onSuccess': this.appendJS,
-        	    'onFail': this.getBundleJS
+        	    'onFail': this.getFilesystemJS
             }
     );
 };

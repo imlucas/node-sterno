@@ -14,15 +14,20 @@ var Loader = function(){
 Loader.prototype.init = function(){
     window.addEventListener(
         'load',
-        function(e){    
-            document.addEventListener(
-                'deviceready',
-                function(e){
-                    console.log('deviceready');
-                    this.getFiles();
-                }.bind(this),
-                false
-            );
+        function(e){  
+            if(window.cordova){
+                document.addEventListener(
+                    'deviceready',
+                    function(e){
+                        console.log('deviceready');
+                        this.getFiles();
+                    }.bind(this),
+                    false
+                );
+            }
+            else{
+                this.getFiles();
+            }
         }.bind(this),
         false
     );

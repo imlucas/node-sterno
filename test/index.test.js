@@ -1,75 +1,57 @@
 "use strict";
 
-var assert = chai.assert,
-    url = 'http://localhost';
+var assert = window.chai.assert,
+  origin = 'http://localhost';
 
-describe("Loader", function(){
-    before(function(){
-        localStorage.clear();
+describe("app", function(){
+  before(function(){
+    localStorage.clear();
+  });
+
+  describe("Setup", function(){
+    var app = window.sterno(origin, ['/app.js'], '/sterno-manifest.json');
+
+    it("should be changed for a fresh file", function(){
+      assert.equal(app.assets[0].updated, true);
     });
 
-    describe("Setup", function(){
-        var loader = new Loader(url, ['/app.js']);
-        it("should use the default bootstrap path", function(){
-            assert.equal(loader.bootstrapPath, url + '/sterno-bootstrap.json');
-        });
+    it("should not be changed if local storage matches", function(){
+      app.manifest['/app.js'] = '1234';
+      localStorage.setItem('sterno:manifest:/app.js', '1234');
+      assert.equal(app.assets[0].updated, false);
+    });
+  });
 
-        it("should be changed for a fresh file", function(){
-            assert.equal(loader.hasChanged("/app.js"), true);
-        });
+  describe("Upgrade", function(){
+    var app = window.sterno(origin, ['/app.js'], '/sterno-manifest.json');
 
-        it("should not be changed if local storage matches", function(){
-            loader.versions['/app.js'] = '1234';
-            localStorage.setItem('versions_/app.js', '1234');
-            assert.equal(loader.hasChanged('/app.js'), false);
-        });
+    it("should not upgrade if the file version matches", function(){
+      app.manifest['/app.js'] = '1234';
+      localStorage.setItem('sterno:manifest:/app.js', '1234');
+      assert.equal(app.assets[0].updated, false);
     });
 
-    describe("Upgrade", function(){
-        var loader = new Loader(url, ['/app.js']);
+    it("should upgrade if file version mismatches", function(){
+      delete app.local['/app.js'];
+      app.manifest['/app.js'] = '1234';
+      localStorage.setItem('sterno:manifest:/app.js', '5678');
 
-        // @todo (lucas) Way to stub navigator.onLine?
-        // it("should not upgrade if we're not online", function(){
-        //     assert.equal(loader.shouldUpgradeAsset('/app.js'), false);
-        // });
+      app.version = app.parseVersion('1.0.0');
+      app.latest = app.parseVersion('1.0.0');
 
-        it("should not upgrade if the file version matches", function(){
-            loader.versions['/app.js'] = '1234';
-            localStorage.setItem('versions_/app.js', '1234');
-            assert.equal(loader.shouldUpgradeAsset('/app.js'), false);
-        });
-
-        it("should upgrade if file version mismatches", function(){
-            delete loader.localVersions['/app.js'];
-            loader.versions['/app.js'] = '1234';
-            localStorage.setItem('versions_/app.js', '5678');
-
-            loader.version = loader.parseVersion('1.0.0');
-            loader.incomingVersion = loader.parseVersion('1.0.0');
-
-            assert.equal(loader.shouldUpgradeAsset('/app.js'), true);
-        });
-
-        it("should not upgrade on app minor version mismatch", function(){
-            loader.version = loader.parseVersion('1.0.0');
-            loader.incomingVersion = loader.parseVersion('1.1.0');
-            assert.equal(loader.shouldUpgradeAsset('/app.js'), false);
-        });
-
-        it("should not upgrade on app patch version mismatch", function(){
-            loader.version = loader.parseVersion('1.0.1');
-            loader.incomingVersion = loader.parseVersion('1.0.2');
-            assert.equal(loader.shouldUpgradeAsset('/app.js'), true);
-        });
+      assert.equal(app.assets[0].upgrade, true);
     });
 
-    describe("Device Ready", function(){
-        var loader = new Loader(url, ['/app.js']);
-        it("should fire", function(done){
-            loader.deviceReady(function(err){
-                console.error(err);
-                done();
-            });
-        });
+    it("should not upgrade on app minor version mismatch", function(){
+      app.version = app.parseVersion('1.0.0');
+      app.latest = app.parseVersion('1.1.0');
+      assert.equal(app.assets[0].upgrade, false);
     });
+
+    it("should not upgrade on app patch version mismatch", function(){
+      app.version = app.parseVersion('1.0.1');
+      app.latest = app.parseVersion('1.0.2');
+      assert.equal(app.assets[0].upgrade, true);
+    });
+  });
 });

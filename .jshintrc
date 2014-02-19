@@ -45,7 +45,7 @@
     "plusplus": false,
     "trailing": true,
     "white": false,
-    "indent": 4,
+    "indent": 2,
     "predef": [
         "describe",         // Used by mocha
         "it",               // Used by mocha

@@ -1,7 +1,7 @@
 {
     "passfail": false,
-    "node": false,
-    "jquery": true,
+    "node": true,
+    "jquery": false,
     "browser": true,
     "predef": [],
     "debug": false,

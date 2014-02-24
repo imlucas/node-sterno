@@ -1,57 +1,95 @@
-"use strict";
+'use strict';
 
-var assert = window.chai.assert,
+require('debug').enable('*');
+
+var sterno = require('../'),
+  Version = require('../lib/version'),
+  assert = require('assert'),
+  debug = require('debug')('sterno:test'),
   origin = 'http://localhost';
 
-describe("app", function(){
+describe('asset', function(){
   before(function(){
+    debug('resetting local storage');
     localStorage.clear();
   });
 
-  describe("Setup", function(){
-    var app = window.sterno(origin, ['/app.js'], '/sterno-manifest.json');
-
-    it("should be changed for a fresh file", function(){
-      assert.equal(app.assets[0].updated, true);
+  describe('updated', function(){
+    it('should have an updated flag if its a new file', function(done){
+      sterno(origin, ['/app.js'], {manifest: {}}, function(err, app){
+        if(err){
+          return done(err);
+        }
+        assert.equal(app.assets[0].updated, true);
+        done();
+      });
     });
 
-    it("should not be changed if local storage matches", function(){
-      app.manifest['/app.js'] = '1234';
+    it('should recognize a previously seen version', function(done){
       localStorage.setItem('sterno:manifest:/app.js', '1234');
-      assert.equal(app.assets[0].updated, false);
+      sterno(origin, ['/app.js'], function(err, app){
+        if(err){
+          return done(err);
+        }
+        assert.equal(app.assets[0].updated, false);
+        done();
+      });
     });
   });
-
-  describe("Upgrade", function(){
-    var app = window.sterno(origin, ['/app.js'], '/sterno-manifest.json');
-
-    it("should not upgrade if the file version matches", function(){
-      app.manifest['/app.js'] = '1234';
+  describe('upgrade', function(){
+    it('should not upgrade if the file version matches', function(done){
       localStorage.setItem('sterno:manifest:/app.js', '1234');
-      assert.equal(app.assets[0].updated, false);
+      sterno(origin, ['/app.js'], function(err, app){
+        if(err){
+          return done(err);
+        }
+
+        app.manifest['/app.js'] = '1234';
+        assert.equal(app.assets[0].updated, false);
+        done();
+      });
     });
 
-    it("should upgrade if file version mismatches", function(){
-      delete app.local['/app.js'];
-      app.manifest['/app.js'] = '1234';
-      localStorage.setItem('sterno:manifest:/app.js', '5678');
+    it('should upgrade if file version mismatches', function(done){
+      sterno(origin, ['/app.js'], function(err, app){
+        if(err){
+          return done(err);
+        }
 
-      app.version = app.parseVersion('1.0.0');
-      app.latest = app.parseVersion('1.0.0');
+        delete app.local['/app.js'];
+        app.manifest['/app.js'] = '1234';
+        localStorage.setItem('sterno:manifest:/app.js', '5678');
 
-      assert.equal(app.assets[0].upgrade, true);
+        app.version = new Version('1.0.0');
+        app.latest = new Version('1.0.0');
+
+        assert.equal(app.assets[0].upgrade, true);
+        done();
+      });
     });
 
-    it("should not upgrade on app minor version mismatch", function(){
-      app.version = app.parseVersion('1.0.0');
-      app.latest = app.parseVersion('1.1.0');
-      assert.equal(app.assets[0].upgrade, false);
+    it('should not upgrade on app minor version mismatch', function(done){
+      sterno(origin, ['/app.js'], function(err, app){
+        if(err){
+          return done(err);
+        }
+        app.version = new Version('1.0.0');
+        app.latest = new Version('1.1.0');
+        assert.equal(app.assets[0].upgrade, false);
+        done();
+      });
     });
 
-    it("should not upgrade on app patch version mismatch", function(){
-      app.version = app.parseVersion('1.0.1');
-      app.latest = app.parseVersion('1.0.2');
-      assert.equal(app.assets[0].upgrade, true);
+    it('should not upgrade on app patch version mismatch', function(done){
+      sterno(origin, ['/app.js'], function(err, app){
+        if(err){
+          return done(err);
+        }
+        app.version = new Version('1.0.1');
+        app.latest = new Version('1.0.2');
+        assert.equal(app.assets[0].upgrade, true);
+        done();
+      });
     });
   });
 });

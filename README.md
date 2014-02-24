@@ -1,4 +1,8 @@
-# Sterno
+# sterno
+
+[![build status](https://secure.travis-ci.org/imlucas/node-sterno.png)](http://travis-ci.org/imlucas/node-sterno)
+
+## @todo update examples as api has changed in 2.0.0
 
 Tired of appcache being broken?  Still need to work with offline or packaged apps?  I'm here to help.
 

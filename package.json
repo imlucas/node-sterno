@@ -4,7 +4,7 @@
   "description": "When app cache works right, this wont be neccessary any more.",
   "main": "index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test > /dev/null 2>&1 && mocha-phantomjs ./.build/index.test.html"
   },
   "repository": {
     "type": "git",
@@ -14,10 +14,10 @@
     "debug": "https://github.com/Buritica/debug/archive/v0.7.4.tar.gz"
   },
   "devDependencies": {
-    "chai": "~1.6.0",
-    "mocha": "~1.10.0",
     "gulp": "~3.5.2",
-    "gulp-browserify": "~0.4.2"
+    "gulp-browserify": "~0.4.2",
+    "mocha": "~1.17.1",
+    "mocha-phantomjs": "~3.3.2"
   },
   "author": "Lucas Hrabovsky",
   "license": "MIT",

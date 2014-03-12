@@ -6,6 +6,7 @@ var sterno = require('../'),
   App = require('../lib/app'),
   Version = require('../lib/version'),
   assert = require('assert'),
+  stor = require('stor'),
   debug = require('debug')('sterno:test'),
   origin = 'http://localhost',
   mockedResources = {};
@@ -27,9 +28,11 @@ function resources(pathnameToContents){
 }
 
 describe('sterno', function(){
-  beforeEach(function(){
-    localStorage.clear();
+  beforeEach(function(done){
     mockedResources = {};
+    stor.clear(function(){
+      done();
+    });
   });
 
   describe('new asset', function(){
@@ -53,14 +56,14 @@ describe('sterno', function(){
         '/sterno-manifest.json': '{"version": "1.0.0", "/app.js": "1"}',
         '/app.js': 'console.log("yello world.");'
       });
-      localStorage.setItem('sterno:manifest:/app.js', '1');
-
-      sterno(origin, ['/app.js'], function(err, app){
-        if(err){
-          return done(err);
-        }
-        assert.equal(app.assets[0].update, false);
-        done();
+      stor.set('sterno:manifest:/app.js', '1', function(){
+        sterno(origin, ['/app.js'], function(err, app){
+          if(err){
+            return done(err);
+          }
+          assert.equal(app.assets[0].update, false);
+          done();
+        });
       });
     });
   });
@@ -72,15 +75,16 @@ describe('sterno', function(){
         '/app.js': 'console.log("yello world.");'
       });
 
-      localStorage.setItem('sterno:manifest:/app.js', '1');
+      stor.set('sterno:manifest:/app.js', '1', function(){
 
-      sterno(origin, ['/app.js'], function(err, app){
-        if(err){
-          return done(err);
-        }
+        sterno(origin, ['/app.js'], function(err, app){
+          if(err){
+            return done(err);
+          }
 
-        assert.equal(app.assets[0].update, false);
-        done();
+          assert.equal(app.assets[0].update, false);
+          done();
+        });
       });
     });
 
@@ -89,13 +93,14 @@ describe('sterno', function(){
         '/sterno-manifest.json': '{"version": "1.0.0", "/app.js": "2"}',
         '/app.js': 'console.log("yello world.");'
       });
-      localStorage.setItem('sterno:manifest:/app.js', '1');
-      sterno(origin, ['/app.js'], function(err, app){
-        if(err){
-          return done(err);
-        }
-        assert.equal(app.assets[0].update, true);
-        done();
+      stor.set('sterno:manifest:/app.js', '1', function(){
+        sterno(origin, ['/app.js'], function(err, app){
+          if(err){
+            return done(err);
+          }
+          assert.equal(app.assets[0].update, true);
+          done();
+        });
       });
     });
   });
@@ -106,17 +111,21 @@ describe('sterno', function(){
         '/sterno-manifest.json': '{"version": "1.0.0", "/app.js": "2"}',
         '/app.js': 'console.log("hello world.");'
       });
-      localStorage.setItem('sterno:app:version', '1.0.0');
-      localStorage.setItem('sterno:manifest:/app.js', '1');
+      stor.set('sterno:app:version', '1.0.0', function(){
+        stor.set('sterno:manifest:/app.js', '1', function(){
 
-      sterno(origin, ['/app.js'], function(err, app){
-        if(err){
-          return done(err);
-        }
 
-        assert.equal(app.assets[0].update, true);
-        done();
+          sterno(origin, ['/app.js'], function(err, app){
+            if(err){
+              return done(err);
+            }
+
+            assert.equal(app.assets[0].update, true);
+            done();
+          });
+        });
       });
+
     });
     describe('existing asset has changed', function(){
       function mockVersion(range, current, incoming, expect, done){
@@ -124,22 +133,25 @@ describe('sterno', function(){
           '/sterno-manifest.json': '{"version": "' + incoming + '", "/app.js": "2"}',
           '/app.js': 'console.log("hello world.");'
         });
-        localStorage.setItem('sterno:app:version', current);
-        localStorage.setItem('sterno:manifest:/app.js', '1');
-
-        sterno(origin, ['/app.js'], {versionRange: range}, function(err, app){
-          if(err){
-            return done(err);
-          }
-          assert.equal(app.upgrade, expect);
-          done();
+        stor.set('sterno:app:version', current, function(){
+          stor.set('sterno:manifest:/app.js', '1', function(){
+            sterno(origin, ['/app.js'], {versionRange: range}, function(err, app){
+              if(err){
+                return done(err);
+              }
+              assert.equal(app.upgrade, expect);
+              done();
+            });
+          });
         });
       }
 
       describe('using ~', function(){
-        beforeEach(function(){
-          localStorage.clear();
+        beforeEach(function(done){
           mockedResources = {};
+          stor.clear(function(){
+            done();
+          });
         });
 
         it('should upgrade if the patch version has changed', function(done){
@@ -156,9 +168,11 @@ describe('sterno', function(){
       });
 
       describe('using *', function(){
-        beforeEach(function(){
-          localStorage.clear();
+        beforeEach(function(done){
           mockedResources = {};
+          stor.clear(function(){
+            done();
+          });
         });
 
         it('should upgrade if the patch version has changed', function(done){
@@ -175,9 +189,11 @@ describe('sterno', function(){
       });
 
       describe('using ^', function(){
-        beforeEach(function(){
-          localStorage.clear();
+        beforeEach(function(done){
           mockedResources = {};
+          stor.clear(function(){
+            done();
+          });
         });
 
         it('should upgrade if the patch version has changed', function(done){
@@ -194,9 +210,11 @@ describe('sterno', function(){
       });
 
       describe('using ==', function(){
-        beforeEach(function(){
-          localStorage.clear();
+        beforeEach(function(done){
           mockedResources = {};
+          stor.clear(function(){
+            done();
+          });
         });
 
         it('should not upgrade if the patch version has changed', function(done){
